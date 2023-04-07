@@ -51,14 +51,12 @@ public class PersonService {
      * @since 2023.04.06
      */
     public List<Person> personByName(String name) {
-        System.out.println(name);
         List<Person> personList = new ArrayList<>();
         for (int i = 0; i < person.length; i++) {
             if (this.person[i].getName().equals(name)) {
                 personList.add(this.person[i]);
             }
         }
-        System.out.println(personList);
         return personList;
     }
 
