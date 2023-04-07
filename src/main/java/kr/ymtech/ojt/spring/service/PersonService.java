@@ -29,8 +29,8 @@ public class PersonService {
         String[] personName = { "LYB", "LSH", "LYB", "AAA", "BBB" };
         String[] personEmail = { "ubin@naver.com", "shyun@naver.com", "youbin@naver.com", "aaa@naver.com",
                 "bbb@naver.com" };
-        String[] personId = {"ubin","shyun","youbin","aaa","bbb"};
-        int[] personAge = {12,13,14,15,16};
+        String[] personId = { "ubin", "shyun", "youbin", "aaa", "bbb" };
+        int[] personAge = { 12, 13, 14, 15, 16 };
 
         for (int i = 0; i < person.length; i++) {
             person[i] = new Person();

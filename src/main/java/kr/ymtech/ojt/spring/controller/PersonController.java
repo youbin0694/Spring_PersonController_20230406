@@ -23,6 +23,10 @@ public class PersonController {
 
     private PersonService personServ;
 
+    public PersonController(){
+        this.personServ = new PersonService();
+    }
+
     /**
      * Name과 일치하는 사용자 반환
      * 
