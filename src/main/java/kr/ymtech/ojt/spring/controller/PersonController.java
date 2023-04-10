@@ -2,6 +2,7 @@ package kr.ymtech.ojt.spring.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +24,7 @@ public class PersonController {
 
     private PersonService personServ;
 
-    public PersonController(){
+    public PersonController() {
         this.personServ = new PersonService();
     }
 
@@ -37,8 +38,8 @@ public class PersonController {
      * @since 2023.04.06
      */
     @GetMapping("/{name}")
-    public List<Person> personByName(@PathVariable String name) {
-        return personServ.personByName(name);
+    public ResponseEntity<List<Person>> findPersonByName(@PathVariable String name) {
+        return ResponseEntity.ok(personServ.personByName(name));
     }
 
     /**
@@ -50,8 +51,14 @@ public class PersonController {
      * @author yblee
      * @since 2023.04.06
      */
-    @GetMapping("")
-    public List<Person> personByEmail(@RequestParam String email) {
-        return personServ.personByName(email);
+    @GetMapping
+    public ResponseEntity<Person> findPersonByEmail(@RequestParam(required = false) String email) {
+        Person person;
+        try {
+            person = personServ.findPersonByEmail(email);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        return ResponseEntity.ok(person);
     }
 }
