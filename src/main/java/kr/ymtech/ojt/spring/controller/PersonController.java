@@ -2,6 +2,8 @@ package kr.ymtech.ojt.spring.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,11 +13,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.ymtech.ojt.spring.dto.PersonDTO;
-import kr.ymtech.ojt.spring.service.PersonService;
+import kr.ymtech.ojt.spring.service.IPersonService;
 import kr.ymtech.ojt.spring.util.Vaild;
 
 /**
@@ -28,11 +29,10 @@ import kr.ymtech.ojt.spring.util.Vaild;
 @RequestMapping("/persons")
 public class PersonController {
 
-    private PersonService personServ;
-
-    public PersonController() {
-        this.personServ = new PersonService();
-    }
+    @Autowired
+    @Qualifier("personService")
+    private IPersonService personServ;
+    private List<String> personInfoList;
 
     /**
      * ID와 일치하는 사용자 반환
@@ -44,11 +44,30 @@ public class PersonController {
      * @since 2023.04.06
      */
     @GetMapping("/{id}")
-    public ResponseEntity<PersonDTO> findPersonByName(@PathVariable String id) {
-        if (personServ.personById(id) == null) {
+    public ResponseEntity<List<String>> findPersonById(@PathVariable String id) {
+        this.personInfoList = personServ.findPersonById(id);
+        if (this.personInfoList == null) {
             return ResponseEntity.badRequest().body(null);
         } else {
-            return ResponseEntity.ok(personServ.personById(id));
+            return ResponseEntity.ok(this.personInfoList);
+        }
+    }
+
+    /**
+     * 전체 사용자 반환
+     * 
+     * @return 전체 사용자
+     * 
+     * @author yblee
+     * @since 2023.04.14
+     */
+    @GetMapping("/all")
+    public ResponseEntity<List<String>> findPersonAll() {
+        this.personInfoList = personServ.findPersonAll();
+        if (this.personInfoList == null) {
+            return ResponseEntity.badRequest().body(null);
+        } else {
+            return ResponseEntity.ok(this.personInfoList);
         }
     }
 
@@ -61,17 +80,18 @@ public class PersonController {
      * @author yblee
      * @since 2023.04.06
      */
-    @GetMapping
-    public ResponseEntity<PersonDTO> findPersonByEmail(@RequestParam(required = false) String email) {
+    @GetMapping("/{email}")
+    public ResponseEntity<List<String>> findPersonByEmail(@PathVariable String email) {
         Vaild vaild = new Vaild();
-        PersonDTO person = null;
+
         if (vaild.isEmail(email)) {
-            person = personServ.findPersonByEmail(email);
+            this.personInfoList = personServ.findPersonByEmail(email);
         }
-        if (person == null) {
+
+        if (this.personInfoList == null) {
             return ResponseEntity.badRequest().body(null);
         } else {
-            return ResponseEntity.ok(person);
+            return ResponseEntity.ok(personServ.findPersonByEmail(email));
         }
     }
 
@@ -86,7 +106,7 @@ public class PersonController {
      */
     @PostMapping
     public ResponseEntity<PersonDTO> insertPersonInfo(@RequestBody PersonDTO person) {
-        if (personServ.insertPersonInfo(person) == null) {
+        if (personServ.insertPersonInfo(person) == false) {
             return ResponseEntity.badRequest().body(null);
         } else {
             return ResponseEntity.ok(person);
@@ -105,9 +125,9 @@ public class PersonController {
      * @since 2023.04.10
      */
     @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PersonDTO>> updatePersonInfo(@PathVariable String id,
+    public ResponseEntity<String> updatePersonInfo(@PathVariable String id,
             @RequestBody PersonDTO person) {
-        List<PersonDTO> updatePerson = this.personServ.updatePersonInfo(id, person);
+        String updatePerson = personServ.updatePersonInfoSet(id, person);
 
         if (updatePerson == null) {
             return ResponseEntity.badRequest().body(null);
@@ -126,12 +146,12 @@ public class PersonController {
      * @since 2023.04.10
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<PersonDTO> deletePersonInfo(@PathVariable String id) {
-        PersonDTO person = this.personServ.deletePersonInfo(id);
-        if (person == null) {
+    public ResponseEntity<Boolean> deletePersonInfo(@PathVariable String id) {
+        boolean flag = personServ.deletePersonInfo(id);
+        if (flag == false) {
             return ResponseEntity.badRequest().body(null);
         } else {
-            return ResponseEntity.ok(person);
+            return ResponseEntity.ok(flag);
         }
     }
 }

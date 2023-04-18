@@ -1,12 +1,12 @@
-package kr.ymtech.ojt.spring.dto;
+package kr.ymtech.ojt.spring.vo;
 
 /**
  * 사용자 정보
  * 
  * @author yblee
- * @since 2023.04.06
+ * @since 2023.04.13
  */
-public class PersonDTO {
+public class PersonVO {
     private String id;
     private String name;
     private int age;
@@ -16,17 +16,17 @@ public class PersonDTO {
      * @return 사용자 ID
      * 
      * @author yblee
-     * @since 2023.04.06
+     * @since 2023.04.13
      */
     public String getId() {
         return id;
     }
 
     /**
-     * @param id 설정할 사용자 ID
+     * @param id 사용자 ID
      * 
      * @author yblee
-     * @since 2023.04.06
+     * @since 2023.04.13
      */
     public void setId(String id) {
         this.id = id;
@@ -36,17 +36,17 @@ public class PersonDTO {
      * @return 사용자 Name
      * 
      * @author yblee
-     * @since 2023.04.06
+     * @since 2023.04.13
      */
     public String getName() {
         return name;
     }
 
     /**
-     * @param name 설정할 사용자 Name
+     * @param id 사용자 Name
      * 
      * @author yblee
-     * @since 2023.04.06
+     * @since 2023.04.13
      */
     public void setName(String name) {
         this.name = name;
@@ -56,17 +56,17 @@ public class PersonDTO {
      * @return 사용자 Age
      * 
      * @author yblee
-     * @since 2023.04.06
+     * @since 2023.04.13
      */
     public int getAge() {
         return age;
     }
 
     /**
-     * @param age 설정할 사용자 Age
+     * @param id 사용자 Age
      * 
      * @author yblee
-     * @since 2023.04.06
+     * @since 2023.04.13
      */
     public void setAge(int age) {
         this.age = age;
@@ -76,24 +76,20 @@ public class PersonDTO {
      * @return 사용자 Email
      * 
      * @author yblee
-     * @since 2023.04.06
+     * @since 2023.04.13
      */
     public String getEmail() {
         return email;
     }
 
     /**
-     * @param email 설정할 사용자 Email
+     * @param id 사용자 Email
      * 
      * @author yblee
-     * @since 2023.04.06
+     * @since 2023.04.13
      */
     public void setEmail(String email) {
         this.email = email;
     }
 
-    @Override
-    public String toString() {
-        return "PersonDTO [id=" + id + ", name=" + name + ", age=" + age + ", email=" + email + "]";
-    }
 }

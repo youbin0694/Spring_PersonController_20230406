@@ -1,4 +1,5 @@
 package kr.ymtech.ojt.spring.dto;
+
 /**
  * 수정할 사용자 정보
  * 
@@ -8,7 +9,8 @@ package kr.ymtech.ojt.spring.dto;
 public class UpdatePersonDTO {
     private PersonDTO old;
     private PersonDTO update;
-    /** 
+
+    /**
      * @return 기존 사용자 정보
      * 
      * @author yblee
@@ -17,6 +19,7 @@ public class UpdatePersonDTO {
     public PersonDTO getOld() {
         return old;
     }
+
     /**
      * @param old 기존 사용자 정보
      * 
@@ -26,6 +29,7 @@ public class UpdatePersonDTO {
     public void setOld(PersonDTO old) {
         this.old = old;
     }
+
     /**
      * @return 수정한 사용자 정보
      * 
@@ -35,6 +39,7 @@ public class UpdatePersonDTO {
     public PersonDTO getUpdate() {
         return update;
     }
+
     /**
      * @param update 수정할 사용자 정보
      * 
@@ -43,6 +48,11 @@ public class UpdatePersonDTO {
      */
     public void setUpdate(PersonDTO update) {
         this.update = update;
+    }
+
+    @Override
+    public String toString() {
+        return "UpdatePersonDTO [old=" + old.getName() + ", update=" + update.getName()+ "]";
     }
 
 }
