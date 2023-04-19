@@ -94,6 +94,6 @@ public class PersonDTO {
 
     @Override
     public String toString() {
-        return "PersonDTO [id=" + id + ", name=" + name + ", age=" + age + ", email=" + email + "]";
+        return "id=" + id + ", name=" + name + ", age=" + age + ", email=" + email;
     }
 }

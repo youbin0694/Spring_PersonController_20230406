@@ -43,7 +43,7 @@ public class PersonController {
      * @author yblee
      * @since 2023.04.06
      */
-    @GetMapping("/{id}")
+    @GetMapping("/byid/{id}")
     public ResponseEntity<List<String>> findPersonById(@PathVariable String id) {
         this.personInfoList = personServ.findPersonById(id);
         if (this.personInfoList == null) {
@@ -61,7 +61,7 @@ public class PersonController {
      * @author yblee
      * @since 2023.04.14
      */
-    @GetMapping("/all")
+    @GetMapping("/by/all")
     public ResponseEntity<List<String>> findPersonAll() {
         this.personInfoList = personServ.findPersonAll();
         if (this.personInfoList == null) {
@@ -80,7 +80,7 @@ public class PersonController {
      * @author yblee
      * @since 2023.04.06
      */
-    @GetMapping("/{email}")
+    @GetMapping("/byemail/{email}")
     public ResponseEntity<List<String>> findPersonByEmail(@PathVariable String email) {
         Vaild vaild = new Vaild();
 

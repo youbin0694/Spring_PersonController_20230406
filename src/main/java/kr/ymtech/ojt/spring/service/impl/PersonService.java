@@ -23,7 +23,6 @@ public class PersonService implements IPersonService {
     @Autowired
     @Qualifier("personDAO")
     private PersonDAO personDAO;
-    private PersonVO personVO;
 
     /**
      * @see IPersonService#deletePersonInfo(String)
@@ -105,7 +104,8 @@ public class PersonService implements IPersonService {
      */
     @Override
     public String updatePersonInfoSet(String id, PersonDTO updatePerson) {
-        convertDTO2VO(updatePerson);
+        PersonVO personVO = new PersonVO();
+        personVO = convertDTO2VO(updatePerson);
         boolean flag = personDAO.updatePersonInfoSet(id, personVO);
         if (flag) {
             PersonDTO updatedPerson = new PersonDTO();
@@ -121,6 +121,7 @@ public class PersonService implements IPersonService {
     }
 
     public PersonVO convertDTO2VO(PersonDTO personDTO) {
+        PersonVO personVO = new PersonVO();
         personVO.setId(personDTO.getId());
         personVO.setName(personDTO.getName());
         personVO.setAge(personDTO.getAge());

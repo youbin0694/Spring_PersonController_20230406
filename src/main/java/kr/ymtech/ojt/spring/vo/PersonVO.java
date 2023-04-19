@@ -92,4 +92,15 @@ public class PersonVO {
         this.email = email;
     }
 
+    /**
+     * string 반환
+     * 
+     * @author yblee
+     * @since 2023.04.19
+     */
+    @Override
+    public String toString() {
+        return "id=" + id + ", name=" + name + ", age=" + age + ", email=" + email;
+    }
+
 }
