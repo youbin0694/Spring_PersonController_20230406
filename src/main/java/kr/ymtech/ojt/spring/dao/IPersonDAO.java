@@ -20,7 +20,7 @@ public interface IPersonDAO {
      * @author yblee
      * @since 2023.04.13
      */
-    public List<String> findPersonById(String id);
+    public PersonVO findPersonById(String id);
 
     /**
      * email 해당 사용자 반환
@@ -31,7 +31,7 @@ public interface IPersonDAO {
      * @author yblee
      * @since 2023.04.13
      */
-    public List<String> findPersonByEmail(String email);
+    public PersonVO findPersonByEmail(String email);
 
     /**
      * 사용자 정보 입력
@@ -75,6 +75,6 @@ public interface IPersonDAO {
      * @author yblee
      * @since 2023.04.13
      */
-    public List<String> findPersonAll();
+    public List<PersonVO> findPersonAll();
 
 }

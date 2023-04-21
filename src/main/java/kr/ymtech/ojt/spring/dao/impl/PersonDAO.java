@@ -2,7 +2,6 @@ package kr.ymtech.ojt.spring.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +22,7 @@ import kr.ymtech.ojt.spring.vo.PersonVO;
 public class PersonDAO implements IPersonDAO {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    private List<PersonVO> personInfo;
-    private List<String> personInfoString;
+    private PersonVO personVO = new PersonVO();
 
     /**
      * @see IPersonDAO#deletePersonInfo(String)
@@ -48,16 +46,9 @@ public class PersonDAO implements IPersonDAO {
      * @since 2023.04.13
      */
     @Override
-    public List<String> findPersonAll() {
-        this.personInfo = this.jdbcTemplate.query("SELECT * FROM user", new PersonRowMapper());
-        if (this.personInfo.isEmpty()) {
-            return null;
-        } else {
-            for (PersonVO p : this.personInfo) {
-                this.personInfoString.add(p.toString());
-            }
-            return this.personInfoString;
-        }
+    public List<PersonVO> findPersonAll() {
+        List<PersonVO> personList = this.jdbcTemplate.query("SELECT * FROM user", new PersonRowMapper());
+        return personList;
     }
 
     /**
@@ -67,14 +58,9 @@ public class PersonDAO implements IPersonDAO {
      * @since 2023.04.13
      */
     @Override
-    public List<String> findPersonByEmail(String email) {
-        this.personInfo = this.jdbcTemplate.query("SELECT * from user WHERE email = ?", new PersonRowMapper(), email);
-        if (this.personInfo.isEmpty()) {
-            return null;
-        } else {
-            this.personInfoString = Arrays.asList(this.personInfo.get(0).toString());
-            return this.personInfoString;
-        }
+    public PersonVO findPersonByEmail(String email) {
+        this.personVO = this.jdbcTemplate.queryForObject("SELECT * from user WHERE email = ?", new PersonRowMapper(), email);
+        return this.personVO;
     }
 
     /**
@@ -100,14 +86,9 @@ public class PersonDAO implements IPersonDAO {
      * @since 2023.04.13
      */
     @Override
-    public List<String> findPersonById(String id) {
-        this.personInfo = this.jdbcTemplate.query("SELECT * from user WHERE id = ?", new PersonRowMapper(), id);
-        if (this.personInfo.isEmpty()) {
-            return null;
-        } else {
-            this.personInfoString = Arrays.asList(this.personInfo.get(0).toString());
-            return this.personInfoString;
-        }
+    public PersonVO findPersonById(String id) {
+        this.personVO = this.jdbcTemplate.queryForObject("SELECT * from user WHERE id = ?", new PersonRowMapper(), id);
+        return this.personVO;
     }
 
     /**
@@ -129,6 +110,8 @@ public class PersonDAO implements IPersonDAO {
     /**
      * 
      * 
+     * @author yblee
+     * @since 2023.04.19
      */
     public class PersonRowMapper implements RowMapper<PersonVO> {
         @Override

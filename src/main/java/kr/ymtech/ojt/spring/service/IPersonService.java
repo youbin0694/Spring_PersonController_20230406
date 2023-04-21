@@ -3,6 +3,8 @@ package kr.ymtech.ojt.spring.service;
 import java.util.List;
 
 import kr.ymtech.ojt.spring.dto.PersonDTO;
+import kr.ymtech.ojt.spring.dto.UpdatePersonDTO;
+import kr.ymtech.ojt.spring.vo.PersonVO;
 
 /**
  * 사용자 관리
@@ -21,7 +23,7 @@ public interface IPersonService {
      * @author yblee
      * @since 2023.04.13
      */
-    public List<String> findPersonById(String id);
+    public PersonVO findPersonById(String id);
 
     /**
      * 전체 사용자 반환
@@ -31,7 +33,7 @@ public interface IPersonService {
      * @author yblee
      * @since 2023.04.14
      */
-    public List<String> findPersonAll();
+    public List<PersonVO> findPersonAll();
 
     /**
      * email 해당 사용자 반환
@@ -42,7 +44,7 @@ public interface IPersonService {
      * @author yblee
      * @since 2023.04.13
      */
-    public List<String> findPersonByEmail(String email);
+    public PersonVO findPersonByEmail(String email);
 
     /**
      * 사용자 정보 입력
@@ -76,5 +78,5 @@ public interface IPersonService {
      * @author yblee
      * @since 2023.04.13
      */
-    public String updatePersonInfoSet(String id, PersonDTO updatePerson);
+    public UpdatePersonDTO updatePersonInfoSet(String id, PersonDTO updatePerson);
 }

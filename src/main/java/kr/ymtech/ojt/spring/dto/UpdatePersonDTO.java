@@ -52,7 +52,8 @@ public class UpdatePersonDTO {
 
     @Override
     public String toString() {
-        return "UpdatePersonDTO [old=" + old.getName() + ", update=" + update.getName()+ "]";
+        return "old=" + old.getName() + ", " + old.getAge() + ", " + old.getEmail() + ", " + old.getId() + ", update="
+                + update.getName() + ", " + update.getAge() + ", " + update.getEmail() + ", " + update.getId();
     }
 
 }

@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.ymtech.ojt.spring.dto.PersonDTO;
+import kr.ymtech.ojt.spring.dto.UpdatePersonDTO;
 import kr.ymtech.ojt.spring.service.IPersonService;
 import kr.ymtech.ojt.spring.util.Vaild;
+import kr.ymtech.ojt.spring.vo.PersonVO;
 
 /**
  * 사용자 기능 관리
@@ -32,7 +34,7 @@ public class PersonController {
     @Autowired
     @Qualifier("personService")
     private IPersonService personServ;
-    private List<String> personInfoList;
+    private PersonVO personVO = new PersonVO();
 
     /**
      * ID와 일치하는 사용자 반환
@@ -44,12 +46,12 @@ public class PersonController {
      * @since 2023.04.06
      */
     @GetMapping("/byid/{id}")
-    public ResponseEntity<List<String>> findPersonById(@PathVariable String id) {
-        this.personInfoList = personServ.findPersonById(id);
-        if (this.personInfoList == null) {
+    public ResponseEntity<PersonVO> findPersonById(@PathVariable String id) {
+        this.personVO = personServ.findPersonById(id);
+        if (personVO == null) {
             return ResponseEntity.badRequest().body(null);
         } else {
-            return ResponseEntity.ok(this.personInfoList);
+            return ResponseEntity.ok(this.personVO);
         }
     }
 
@@ -62,12 +64,12 @@ public class PersonController {
      * @since 2023.04.14
      */
     @GetMapping("/by/all")
-    public ResponseEntity<List<String>> findPersonAll() {
-        this.personInfoList = personServ.findPersonAll();
-        if (this.personInfoList == null) {
+    public ResponseEntity<List<PersonVO>> findPersonAll() {
+        List<PersonVO> personAllList = personServ.findPersonAll();
+        if (this.personVO == null) {
             return ResponseEntity.badRequest().body(null);
         } else {
-            return ResponseEntity.ok(this.personInfoList);
+            return ResponseEntity.ok(personAllList);
         }
     }
 
@@ -81,17 +83,17 @@ public class PersonController {
      * @since 2023.04.06
      */
     @GetMapping("/byemail/{email}")
-    public ResponseEntity<List<String>> findPersonByEmail(@PathVariable String email) {
+    public ResponseEntity<PersonVO> findPersonByEmail(@PathVariable String email) {
         Vaild vaild = new Vaild();
 
         if (vaild.isEmail(email)) {
-            this.personInfoList = personServ.findPersonByEmail(email);
+            this.personVO = personServ.findPersonByEmail(email);
         }
 
-        if (this.personInfoList == null) {
+        if (this.personVO == null) {
             return ResponseEntity.badRequest().body(null);
         } else {
-            return ResponseEntity.ok(personServ.findPersonByEmail(email));
+            return ResponseEntity.ok(this.personVO);
         }
     }
 
@@ -125,9 +127,9 @@ public class PersonController {
      * @since 2023.04.10
      */
     @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> updatePersonInfo(@PathVariable String id,
+    public ResponseEntity<UpdatePersonDTO> updatePersonInfo(@PathVariable String id,
             @RequestBody PersonDTO person) {
-        String updatePerson = personServ.updatePersonInfoSet(id, person);
+        UpdatePersonDTO updatePerson = personServ.updatePersonInfoSet(id, person);
 
         if (updatePerson == null) {
             return ResponseEntity.badRequest().body(null);
