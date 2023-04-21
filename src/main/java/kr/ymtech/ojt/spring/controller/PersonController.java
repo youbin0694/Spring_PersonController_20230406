@@ -34,7 +34,11 @@ public class PersonController {
     @Autowired
     @Qualifier("personService")
     private IPersonService personServ;
-    private PersonVO personVO = new PersonVO();
+    private PersonVO personVO;
+
+    public PersonController() {
+        personVO = new PersonVO();
+    }
 
     /**
      * ID와 일치하는 사용자 반환

@@ -22,7 +22,13 @@ import kr.ymtech.ojt.spring.vo.PersonVO;
 public class PersonDAO implements IPersonDAO {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    private PersonVO personVO = new PersonVO();
+    private PersonVO personVO;
+    private PersonRowMapper personRowMapper;
+
+    public PersonDAO() {
+        personVO = new PersonVO();
+        personRowMapper = new PersonRowMapper();
+    }
 
     /**
      * @see IPersonDAO#deletePersonInfo(String)
@@ -32,10 +38,7 @@ public class PersonDAO implements IPersonDAO {
      */
     @Override
     public boolean deletePersonInfo(String id) {
-        boolean flag = false;
-        if (this.jdbcTemplate.update("DELETE FROM user WHERE id = ?", id) > 0) {
-            flag = true;
-        }
+        boolean flag = this.jdbcTemplate.update("DELETE FROM user WHERE id = ?", id) > 0;
         return flag;
     }
 
@@ -47,7 +50,7 @@ public class PersonDAO implements IPersonDAO {
      */
     @Override
     public List<PersonVO> findPersonAll() {
-        List<PersonVO> personList = this.jdbcTemplate.query("SELECT * FROM user", new PersonRowMapper());
+        List<PersonVO> personList = this.jdbcTemplate.query("SELECT * FROM user", personRowMapper);
         return personList;
     }
 
@@ -59,7 +62,8 @@ public class PersonDAO implements IPersonDAO {
      */
     @Override
     public PersonVO findPersonByEmail(String email) {
-        this.personVO = this.jdbcTemplate.queryForObject("SELECT * from user WHERE email = ?", new PersonRowMapper(), email);
+        this.personVO = this.jdbcTemplate.queryForObject("SELECT * from user WHERE email = ?", personRowMapper,
+                email);
         return this.personVO;
     }
 
@@ -71,11 +75,10 @@ public class PersonDAO implements IPersonDAO {
      */
     @Override
     public boolean insertPersonInfo(PersonVO person) {
-        boolean flag = false;
-        if (this.jdbcTemplate.update("INSERT INTO user VALUES (?, ?, ?, ?)", person.getId(), person.getName(),
-                person.getAge(), person.getEmail()) > 0) {
-            flag = true;
-        }
+        boolean flag = this.jdbcTemplate.update("INSERT INTO user VALUES (?, ?, ?, ?)", person.getId(),
+                person.getName(),
+                person.getAge(), person.getEmail()) > 0;
+
         return flag;
     }
 
@@ -87,7 +90,7 @@ public class PersonDAO implements IPersonDAO {
      */
     @Override
     public PersonVO findPersonById(String id) {
-        this.personVO = this.jdbcTemplate.queryForObject("SELECT * from user WHERE id = ?", new PersonRowMapper(), id);
+        this.personVO = this.jdbcTemplate.queryForObject("SELECT * from user WHERE id = ?", personRowMapper, id);
         return this.personVO;
     }
 
@@ -99,11 +102,9 @@ public class PersonDAO implements IPersonDAO {
      */
     @Override
     public boolean updatePersonInfoSet(String id, PersonVO personVO) {
-        boolean flag = false;
-        if (this.jdbcTemplate.update("UPDATE user SET name=?, age=?, email=? WHERE id=?", personVO.getName(),
-                personVO.getAge(), personVO.getEmail(), id) > 0) {
-            flag = true;
-        }
+        boolean flag = this.jdbcTemplate.update("UPDATE user SET name=?, age=?, email=? WHERE id=?", personVO.getName(),
+                personVO.getAge(), personVO.getEmail(), id) > 0;
+
         return flag;
     }
 
