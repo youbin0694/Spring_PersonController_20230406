@@ -1,8 +1,5 @@
 package kr.ymtech.ojt.spring.controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.github.mjyoun.core.data.Result;
 import kr.ymtech.ojt.spring.dto.PersonDTO;
-import kr.ymtech.ojt.spring.dto.UpdatePersonDTO;
 import kr.ymtech.ojt.spring.service.IPersonService;
-import kr.ymtech.ojt.spring.util.Vaild;
+import kr.ymtech.ojt.spring.service.impl.PersonService;
 import kr.ymtech.ojt.spring.vo.PersonVO;
 
 /**
@@ -31,13 +28,19 @@ import kr.ymtech.ojt.spring.vo.PersonVO;
 @RequestMapping("/persons")
 public class PersonController {
 
-    @Autowired
-    @Qualifier("personService")
-    private IPersonService personServ;
-    private PersonVO personVO;
+    
+    private final IPersonService personServ;
 
-    public PersonController() {
-        personVO = new PersonVO();
+    /**
+     * (non-javadoc)
+     * 
+     * @param personServ 
+     * 
+     * @author yblee
+     * @since 2023.04.25
+     */
+    public PersonController(@Qualifier(PersonService.QUALIFIER_BEAN) IPersonService personServ){
+        this.personServ = personServ;
     }
 
     /**
@@ -50,13 +53,8 @@ public class PersonController {
      * @since 2023.04.06
      */
     @GetMapping("/byid/{id}")
-    public ResponseEntity<PersonVO> findPersonById(@PathVariable String id) {
-        this.personVO = personServ.findPersonById(id);
-        if (personVO == null) {
-            return ResponseEntity.badRequest().body(null);
-        } else {
-            return ResponseEntity.ok(this.personVO);
-        }
+    public ResponseEntity<Result<PersonVO>> findPersonById(@PathVariable String id) {
+        return ResponseEntity.ok(this.personServ.findPersonById(id));
     }
 
     /**
@@ -68,13 +66,8 @@ public class PersonController {
      * @since 2023.04.14
      */
     @GetMapping("/by/all")
-    public ResponseEntity<List<PersonVO>> findPersonAll() {
-        List<PersonVO> personAllList = personServ.findPersonAll();
-        if (this.personVO == null) {
-            return ResponseEntity.badRequest().body(null);
-        } else {
-            return ResponseEntity.ok(personAllList);
-        }
+    public ResponseEntity<Result<PersonVO>> findPersonAll() {
+        return ResponseEntity.ok(this.personServ.findPersonAll());
     }
 
     /**
@@ -87,18 +80,8 @@ public class PersonController {
      * @since 2023.04.06
      */
     @GetMapping("/byemail/{email}")
-    public ResponseEntity<PersonVO> findPersonByEmail(@PathVariable String email) {
-        Vaild vaild = new Vaild();
-
-        if (vaild.isEmail(email)) {
-            this.personVO = personServ.findPersonByEmail(email);
-        }
-
-        if (this.personVO == null) {
-            return ResponseEntity.badRequest().body(null);
-        } else {
-            return ResponseEntity.ok(this.personVO);
-        }
+    public ResponseEntity<Result<PersonVO>> findPersonByEmail(@PathVariable String email) {
+        return ResponseEntity.ok(this.personServ.findPersonByEmail(email));
     }
 
     /**
@@ -111,16 +94,13 @@ public class PersonController {
      * @since 2023.04.10
      */
     @PostMapping
-    public ResponseEntity<PersonDTO> insertPersonInfo(@RequestBody PersonDTO person) {
-        if (personServ.insertPersonInfo(person) == false) {
-            return ResponseEntity.badRequest().body(null);
-        } else {
-            return ResponseEntity.ok(person);
-        }
+    public ResponseEntity<Result<Boolean>> insertPersonInfo(@RequestBody PersonDTO person) {
+        return ResponseEntity.ok(this.personServ.insertPersonInfo(person));
     }
 
     /**
      * 사용자 정보 수정
+     * 
      * 
      * @param id     사용자 id
      * 
@@ -131,15 +111,9 @@ public class PersonController {
      * @since 2023.04.10
      */
     @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UpdatePersonDTO> updatePersonInfo(@PathVariable String id,
+    public ResponseEntity<Result<Boolean>> updatePersonInfo(@PathVariable String id,
             @RequestBody PersonDTO person) {
-        UpdatePersonDTO updatePerson = personServ.updatePersonInfoSet(id, person);
-
-        if (updatePerson == null) {
-            return ResponseEntity.badRequest().body(null);
-        } else {
-            return ResponseEntity.ok(updatePerson);
-        }
+        return ResponseEntity.ok(this.personServ.updatePersonInfoSet(id, person));
     }
 
     /**
@@ -152,12 +126,7 @@ public class PersonController {
      * @since 2023.04.10
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deletePersonInfo(@PathVariable String id) {
-        boolean flag = personServ.deletePersonInfo(id);
-        if (flag == false) {
-            return ResponseEntity.badRequest().body(null);
-        } else {
-            return ResponseEntity.ok(flag);
-        }
+    public ResponseEntity<Result<Boolean>> deletePersonInfo(@PathVariable String id) {
+        return ResponseEntity.ok(this.personServ.deletePersonInfo(id));
     }
 }

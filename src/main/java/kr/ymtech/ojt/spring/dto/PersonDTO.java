@@ -1,5 +1,8 @@
 package kr.ymtech.ojt.spring.dto;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+
 /**
  * 사용자 정보
  * 
@@ -7,9 +10,13 @@ package kr.ymtech.ojt.spring.dto;
  * @since 2023.04.06
  */
 public class PersonDTO {
+
+    @NotBlank
     private String id;
+    @NotBlank
     private String name;
     private int age;
+    @Email
     private String email;
 
     /**

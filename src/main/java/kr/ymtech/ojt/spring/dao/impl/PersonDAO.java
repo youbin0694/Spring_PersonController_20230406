@@ -20,6 +20,7 @@ import kr.ymtech.ojt.spring.vo.PersonVO;
  */
 @Repository
 public class PersonDAO implements IPersonDAO {
+    
     @Autowired
     private JdbcTemplate jdbcTemplate;
     private PersonVO personVO;

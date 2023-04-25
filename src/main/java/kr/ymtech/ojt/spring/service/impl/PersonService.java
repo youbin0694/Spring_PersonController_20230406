@@ -1,14 +1,15 @@
 package kr.ymtech.ojt.spring.service.impl;
 
-import java.util.List;
+import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import kr.ymtech.ojt.spring.dao.impl.PersonDAO;
+import io.github.mjyoun.core.data.Result;
 import kr.ymtech.ojt.spring.dto.PersonDTO;
-import kr.ymtech.ojt.spring.dto.UpdatePersonDTO;
+import kr.ymtech.ojt.spring.repository.PersonRepository;
 import kr.ymtech.ojt.spring.service.IPersonService;
 import kr.ymtech.ojt.spring.vo.PersonVO;
 
@@ -18,12 +19,24 @@ import kr.ymtech.ojt.spring.vo.PersonVO;
  * @author yblee
  * @since 2023.04.06
  */
-@Service
+@Service(PersonService.QUALIFIER_BEAN)
 public class PersonService implements IPersonService {
 
-    @Autowired
-    @Qualifier("personDAO")
-    private PersonDAO personDAO;
+    public static final String QUALIFIER_BEAN = "kr.ymtech.ojt.spring.service.impl.PersonService";
+
+    private PersonRepository personRepository;
+
+    /**
+     * (non-javadoc)
+     * 
+     * @param personRepository
+     * 
+     * @author yblee
+     * @since 2023.04.24
+     */
+    public PersonService(@Qualifier(PersonRepository.QUALIFIER_BEAN) PersonRepository personRepository) {
+        this.personRepository = personRepository;
+    }
 
     /**
      * @see IPersonService#deletePersonInfo(String)
@@ -32,9 +45,18 @@ public class PersonService implements IPersonService {
      * @since 2023.04.10
      */
     @Override
-    public boolean deletePersonInfo(String id) {
-        boolean flag = personDAO.deletePersonInfo(id);
-        return flag;
+    public Result<Boolean> deletePersonInfo(@Valid String id) {
+        Result<Boolean> result = null;
+        Optional<PersonVO> personOp = this.personRepository.findById(id);
+        if (!personOp.isPresent()) {
+            String msg = "존재하지 않는 아이디 입니다.";
+            System.out.println(msg);
+            result = Result.error(msg);
+        } else {
+            this.personRepository.deleteById(id);
+            result = Result.ok(true);
+        }
+        return result;
     }
 
     /**
@@ -44,9 +66,18 @@ public class PersonService implements IPersonService {
      * @since 2023.04.06
      */
     @Override
-    public PersonVO findPersonByEmail(String email) {
-        PersonVO findPersonEmail = personDAO.findPersonByEmail(email);
-        return findPersonEmail;
+    public Result<PersonVO> findPersonByEmail(@Valid String email) {
+        Result<PersonVO> result = null;
+        Optional<PersonVO> personOp = this.personRepository.findByEmail(email);
+        if (!personOp.isPresent()) {
+            String msg = "존재하지 않는 이메일 입니다.";
+            System.out.println(msg);
+            result = Result.error(msg);
+        } else {
+            PersonVO personVO = personOp.get();
+            result = Result.ok(personVO);
+        }
+        return result;
     }
 
     /**
@@ -56,9 +87,19 @@ public class PersonService implements IPersonService {
      * @since 2023.04.10
      */
     @Override
-    public boolean insertPersonInfo(PersonDTO person) {
-        boolean flag = personDAO.insertPersonInfo(convertDTO2VO(person));
-        return flag;
+    public Result<Boolean> insertPersonInfo(@Valid PersonDTO person) {
+        Result<Boolean> result = null;
+        Optional<PersonVO> personOp = this.personRepository.findById(person.getId());
+        if (personOp.isPresent()) {
+            String msg = "존재하는 ID 입니다.";
+            System.out.println(msg);
+            result = Result.error(msg);
+        } else {
+            PersonVO personVO = this.convertDTO2VO(person);
+            this.personRepository.save(personVO);
+            result = Result.ok(true);
+        }
+        return result;
     }
 
     /**
@@ -68,9 +109,18 @@ public class PersonService implements IPersonService {
      * @since 2023.04.06
      */
     @Override
-    public PersonVO findPersonById(String id) {
-        PersonVO findPersonId = personDAO.findPersonById(id);
-        return findPersonId;
+    public Result<PersonVO> findPersonById(@Valid String id) {
+        Result<PersonVO> result = null;
+        Optional<PersonVO> personOp = this.personRepository.findById(id);
+        if (!personOp.isPresent()) {
+            String msg = "존재하지 않는 아이디 입니다.";
+            System.out.println(msg);
+            result = Result.error(msg);
+        } else {
+            PersonVO personVO = personOp.get();
+            result = Result.ok(personVO);
+        }
+        return result;
     }
 
     /**
@@ -80,9 +130,12 @@ public class PersonService implements IPersonService {
      * @since 2023.04.14
      */
     @Override
-    public List<PersonVO> findPersonAll() {
-        List<PersonVO> findPersonAll = personDAO.findPersonAll();
-        return findPersonAll;
+    @SuppressWarnings("unchecked")
+    public Result<PersonVO> findPersonAll() {
+        Result<PersonVO> result = null;
+        // TODO 어떻게?
+        result = (Result<PersonVO>) this.personRepository.findAll();
+        return result;
     }
 
     /**
@@ -92,38 +145,19 @@ public class PersonService implements IPersonService {
      * @since 2023.04.13
      */
     @Override
-    public UpdatePersonDTO updatePersonInfoSet(String id, PersonDTO updatePerson) {
-        // 수정 전 사용자 정보 찾기
-        PersonVO personVO = personDAO.findPersonById(id);
-        // 사용자 정보가 존재한다면
-        if (personVO != null) {
-            // 수정 전 사용자 정보 VO 객체 DTO convert
-            PersonDTO personDTO = convertVO2DTO(personVO);
-            // 수정 전/후 정보 담을 updatePersonDTO 객체
-            UpdatePersonDTO updatePersonDTO = new UpdatePersonDTO();
-            // Old에 수정 전 정보 set
-            updatePersonDTO.setOld(personDTO);
-
-            // 수정 할 사용자 정보 VO convert
-            personVO = convertDTO2VO(updatePerson);
-            // 수정 성공했다면 flag = true
-            boolean flag = personDAO.updatePersonInfoSet(id, personVO);
-
-            if (flag) {
-                PersonDTO updatedPerson = new PersonDTO();
-                updatedPerson.setId(personDTO.getId());
-                updatedPerson.setAge(updatePerson.getAge());
-                updatedPerson.setEmail(updatePerson.getEmail());
-                updatedPerson.setName(updatePerson.getName());
-                updatePersonDTO.setUpdate(updatedPerson);
-                return updatePersonDTO;
-            } else {
-                System.out.println("사용자 정보 수정에 실패하였습니다.");
-                return null;
-            }
+    public Result<Boolean> updatePersonInfoSet(@Valid String id, @Valid PersonDTO updatePerson) {
+        Result<Boolean> result = null;
+        Optional<PersonVO> personOp = this.personRepository.findById(id);
+        if (personOp.isPresent()) {
+            String msg = "존재하는 ID 입니다.";
+            System.out.println(msg);
+            result = Result.error(msg);
         } else {
-            return null;
+            PersonVO personVO = this.convertDTO2VO(updatePerson);
+            this.personRepository.save(personVO);
+            result = Result.ok(true);
         }
+        return result;
     }
 
     /**
@@ -135,7 +169,7 @@ public class PersonService implements IPersonService {
      * @author yblee
      * @since 2023.04.20
      */
-    public PersonVO convertDTO2VO(PersonDTO personDTO) {
+    public PersonVO convertDTO2VO(@Valid PersonDTO personDTO) {
         PersonVO personVO = new PersonVO();
         personVO.setId(personDTO.getId());
         personVO.setName(personDTO.getName());
@@ -153,7 +187,7 @@ public class PersonService implements IPersonService {
      * @author yblee
      * @since 2023.04.20
      */
-    public PersonDTO convertVO2DTO(PersonVO personVO) {
+    public PersonDTO convertVO2DTO(@Valid PersonVO personVO) {
         PersonDTO personDTO = new PersonDTO();
         personDTO.setId(personVO.getId());
         personDTO.setName(personVO.getName());

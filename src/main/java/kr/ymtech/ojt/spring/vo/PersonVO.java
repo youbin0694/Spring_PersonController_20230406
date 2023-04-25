@@ -1,5 +1,7 @@
 package kr.ymtech.ojt.spring.vo;
 
+import javax.persistence.Id;
+
 /**
  * 사용자 정보
  * 
@@ -7,6 +9,7 @@ package kr.ymtech.ojt.spring.vo;
  * @since 2023.04.13
  */
 public class PersonVO {
+    @Id
     private String id;
     private String name;
     private int age;
